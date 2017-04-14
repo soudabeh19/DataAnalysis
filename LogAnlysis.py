@@ -36,6 +36,21 @@ def main():
 		show("Q2: Sessions of user achille")	
 		final.foreach(lambda x: show("	+ " + x[0] + ": " + str(x[1])))   
 
+	
+	if qno == '3':
+		
+		regex='.*?(?:[a-z][a-z]+).*?((?:[a-z][a-z]+)).*?(?:[a-z][a-z]+).*?(?:[a-z][a-z]+).*?(?:[a-z][a-z]+).*?(?:[a-z][a-z]+).*?(?:[a-z][a-z]+).*?((?:[a-z][a-z]+))'
+		rg = re.compile(regex,re.IGNORECASE|re.DOTALL)
+		ls = sc.textFile(hostDir1 + ',' + hostDir2)
+		maps = ls.map(lambda x: None if rg.match(x) is None else (rg.match(x).group(1), rg.match(x).group(2)))
+		
+		m = maps.filter(lambda x: x is not None and x[0] in hosts).distinct()
+		#maps.foreach(lambda x:show(x))
+		final= m.reduceByKey(lambda x,y: x + ',' + y)
+		show("* Q3: Unique user names")	
+		final.foreach(lambda x: show("	+ " + x[0] +": ["+ x[1] + "]"))
+
+
 
 
 	
