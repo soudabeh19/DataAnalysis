@@ -49,6 +49,23 @@ def main():
 		final= m.reduceByKey(lambda x,y: x + ',' + y)
 		show("* Q3: Unique user names")	
 		final.foreach(lambda x: show("	+ " + x[0] +": ["+ x[1] + "]"))
+	
+	if qno == '4':
+
+		regex='.*?(?:[a-z][a-z]+).*?((?:[a-z][a-z]+)).*?(?:[a-z][a-z]+).*?(?:[a-z][a-z]+).*?(?:[a-z][a-z]+).*?(?:[a-z][a-z]+).*?(?:[a-z][a-z]+).*?((?:[a-z][a-z]+))'
+		rg = re.compile(regex,re.IGNORECASE|re.DOTALL)
+		ls = sc.textFile(hostDir1 + ',' + hostDir2)
+		maps = ls.map(lambda x: None if rg.match(x) is None else (rg.match(x).group(1), rg.match(x).group(2)))
+		
+		m = maps.filter(lambda x: x is not None and x[0] in hosts)
+
+
+		pairs = m.map(lambda x: ((x[0],x[1]), 1))
+		reducedpairs = pairs.reduceByKey(lambda x, y: x + y)
+		r = reducedpairs.map(lambda x: (x[0][0], "(" + x[0][1] + "," +  str(x[1]) + ")")) 
+		mr = r.reduceByKey(lambda x,y: x + ',' + y)
+		show("* Q4: sessions per user")
+		mr.foreach(lambda x: show("	+ " + x[0] +": ["+str(x[1]) + "]")) 
 
 
 
