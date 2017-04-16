@@ -83,7 +83,24 @@ def main():
 		r.foreach(lambda x: show("	+ " + x[0] + ": " + str(x[1])))  
 
 
+	if qno == '6':
 
+		regex ='.*?(?:[a-z][a-z]+).*?((?:[a-z][a-z]+))([\s\S]+[\w\W]+[\d\D])'	
+		rg = re.compile(regex,re.IGNORECASE|re.DOTALL)
+		ls = sc.textFile(hostDir1 + ',' + hostDir2)
+		maps = ls.map(lambda x: None if rg.match(x) is None else (rg.match(x).group(1), rg.match(x).group(2)))
+		
+		m = maps.filter(lambda x: x is not None and x[0] in hosts  and 'error' in x[1])
+
+		pairs = m.map(lambda x: ((x[0], x[1]), 1))
+		pairsreduced=pairs.reduceByKey(lambda x,y: x+y)
+		
+
+		r = pairsreduced.map(lambda x: (x[0][0],  (x[0][1], x[1]))).groupByKey().mapValues(list)
+		
+	
+		show("* Q6: 5 most frequent error messages")
+		r.foreach(lambda x: Q6(x[0], x[1]))
 
 	
 if __name__ == "__main__":
