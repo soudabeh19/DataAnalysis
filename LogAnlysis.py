@@ -102,6 +102,23 @@ def main():
 		show("* Q6: 5 most frequent error messages")
 		r.foreach(lambda x: Q6(x[0], x[1]))
 
+	if qno == '7':
+
+		regex='.*?(?:[a-z][a-z]+).*?((?:[a-z][a-z]+)).*?(?:[a-z][a-z]+).*?(?:[a-z][a-z]+).*?(?:[a-z][a-z]+).*?(?:[a-z][a-z]+).*?(?:[a-z][a-z]+).*?((?:[a-z][a-z]+))'
+		rg = re.compile(regex,re.IGNORECASE|re.DOTALL)
+		ls = sc.textFile(hostDir1 + ',' + hostDir2)
+		maps = ls.map(lambda x: None if rg.match(x) is None else (rg.match(x).group(2), rg.match(x).group(1)))
+		
+		m = maps.filter(lambda x: x is not None and x[1] in hosts).distinct()
+
+		pairs = m.map(lambda x: (x[0], 1))
+		pairsReduced = pairs.reduceByKey(lambda x,y: x + y)
+
+		f = pairsReduced.filter(lambda x: x[1] == 2)
+		show("Q7: users who started a session on both hosts, i.e., on exactly 2 hosts.")	
+		f.foreach(lambda x: show("	+ : "+ x[0])) 
+
+
 	
 if __name__ == "__main__":
    main() 
