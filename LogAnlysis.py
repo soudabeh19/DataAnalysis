@@ -118,6 +118,24 @@ def main():
 		show("Q7: users who started a session on both hosts, i.e., on exactly 2 hosts.")	
 		f.foreach(lambda x: show("	+ : "+ x[0])) 
 
+	if qno == '8':
+
+		regex='.*?(?:[a-z][a-z]+).*?((?:[a-z][a-z]+)).*?(?:[a-z][a-z]+).*?(?:[a-z][a-z]+).*?(?:[a-z][a-z]+).*?(?:[a-z][a-z]+).*?(?:[a-z][a-z]+).*?((?:[a-z][a-z]+))'
+		rg = re.compile(regex,re.IGNORECASE|re.DOTALL)
+		ls = sc.textFile(hostDir1 + ',' + hostDir2)
+		maps = ls.map(lambda x: None if rg.match(x) is None else (rg.match(x).group(2), rg.match(x).group(1)))
+		
+		m = maps.filter(lambda x: x is not None and x[1] in hosts).distinct()
+
+		pairs = m.map(lambda x: (x[0], (x[1],1)))
+	
+		pairsReduced = pairs.reduceByKey(lambda x,y: (x[0], x[1]+ y[1]))
+
+		r = pairsReduced.filter(lambda x: x[1][1] == 1)
+		show("* Q8: users who started a session on exactly one host, with host name.")	
+		r.foreach(lambda x: show("	+ " + str(x[0])+": "+str(x[1][0]))) 
+
+
 
 	
 if __name__ == "__main__":
