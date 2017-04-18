@@ -3,6 +3,17 @@ import sys, re
 #sys.argv=['-q', '1', 'a/iliad', 'a/odyssey']
 #execfile('b/logAnalyser.py')
 
+def show(x):
+	print x
+
+def Q6(k, p):
+	show(k)  
+	
+	p.sort(key = lambda y: -y[1])
+
+	for x in p[:5]:
+		show("  -(" + str(x[1]) + ', ' + x[0] + ')')
+
 def main():
 	qno = sys.argv[1] 
 	hostDir1 = sys.argv[2] 
@@ -36,7 +47,6 @@ def main():
 		show("Q2: Sessions of user achille")	
 		final.foreach(lambda x: show("	+ " + x[0] + ": " + str(x[1])))   
 
-	
 	if qno == '3':
 		
 		regex='.*?(?:[a-z][a-z]+).*?((?:[a-z][a-z]+)).*?(?:[a-z][a-z]+).*?(?:[a-z][a-z]+).*?(?:[a-z][a-z]+).*?(?:[a-z][a-z]+).*?(?:[a-z][a-z]+).*?((?:[a-z][a-z]+))'
@@ -49,7 +59,7 @@ def main():
 		final= m.reduceByKey(lambda x,y: x + ',' + y)
 		show("* Q3: Unique user names")	
 		final.foreach(lambda x: show("	+ " + x[0] +": ["+ x[1] + "]"))
-	
+
 	if qno == '4':
 
 		regex='.*?(?:[a-z][a-z]+).*?((?:[a-z][a-z]+)).*?(?:[a-z][a-z]+).*?(?:[a-z][a-z]+).*?(?:[a-z][a-z]+).*?(?:[a-z][a-z]+).*?(?:[a-z][a-z]+).*?((?:[a-z][a-z]+))'
@@ -67,7 +77,6 @@ def main():
 		show("* Q4: sessions per user")
 		mr.foreach(lambda x: show("	+ " + x[0] +": ["+str(x[1]) + "]")) 
 
-	
 	if qno == '5':
 
 		regex ='.*?(?:[a-z][a-z]+).*?((?:[a-z][a-z]+))([\s\S]+[\w\W]+[\d\D])'
@@ -81,7 +90,6 @@ def main():
 		r =pairs.reduceByKey(lambda x,y: x+y).sortByKey()
 		show("* Q5: number of errors")
 		r.foreach(lambda x: show("	+ " + x[0] + ": " + str(x[1])))  
-
 
 	if qno == '6':
 
@@ -135,6 +143,7 @@ def main():
 		show("* Q8: users who started a session on exactly one host, with host name.")	
 		r.foreach(lambda x: show("	+ " + str(x[0])+": "+str(x[1][0]))) 
 
+
 	
 	if qno == '9':
 		regex='.*?(?:[a-z][a-z]+).*?((?:[a-z][a-z]+)).*?(?:[a-z][a-z]+).*?(?:[a-z][a-z]+).*?(?:[a-z][a-z]+).*?(?:[a-z][a-z]+).*?(?:[a-z][a-z]+).*?((?:[a-z][a-z]+))'
@@ -167,6 +176,7 @@ def main():
 		u.foreach(lambda x: Q9(x[0], x[1]))	
 
 
+
 	
 if __name__ == "__main__":
-   main() 
+   main(sys.argv[1:]) 
