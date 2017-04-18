@@ -135,6 +135,36 @@ def main():
 		show("* Q8: users who started a session on exactly one host, with host name.")	
 		r.foreach(lambda x: show("	+ " + str(x[0])+": "+str(x[1][0]))) 
 
+	
+	if qno == '9':
+		regex='.*?(?:[a-z][a-z]+).*?((?:[a-z][a-z]+)).*?(?:[a-z][a-z]+).*?(?:[a-z][a-z]+).*?(?:[a-z][a-z]+).*?(?:[a-z][a-z]+).*?(?:[a-z][a-z]+).*?((?:[a-z][a-z]+))'
+		rg = re.compile(regex,re.IGNORECASE|re.DOTALL)
+		ls = sc.textFile(hostDir1 + ',' + hostDir2)
+		maps = ls.map(lambda x: None if rg.match(x) is None else (rg.match(x).group(2), rg.match(x).group(1)))
+		
+		m = maps.filter(lambda x: x is not None and x[0] in hosts).distinct()
+
+	
+		r = m.groupByKey().mapValues(list)
+
+		regex1='.*?(?:[a-z][a-z]+).*?((?:[a-z][a-z]+))([\s\S]+[\w\W]+[\d\D])'
+		rg1 = re.compile(regex1,re.IGNORECASE|re.DOTALL)
+
+		ls1 = ls.map(lambda x: (None if rg1.match(x) is None else rg.match(x).group(1), x))
+		jl = ls1.join(m)
+	
+		f = jl.map(lambda x: (x[0], mapUsers(x[1][0], x[1][1])))
+
+		u = m.map(lambda x: (x[0], mapString(x[1])))
+	
+	
+		for host in hosts:
+			f1 = f.filter(lambda x: x[0] in host)
+			f2 = f1.map(lambda x: x[1])		
+			
+			f2.saveAsTextFile("o/" + host + '-anonymized-10'	)
+	
+		u.foreach(lambda x: Q9(x[0], x[1]))	
 
 
 	
